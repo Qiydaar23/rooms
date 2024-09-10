@@ -2,12 +2,12 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.forms import UserCreationForm
+# from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
-from .models import Room, Topic , Message
-from .forms import RoomForm
+from .models import Room, Topic , Message, User
+from .forms import RoomForm, userForm , MyUserCreationForm
 
 
 
@@ -18,7 +18,7 @@ def loginPage(request):
         return redirect('home')
 
     if request.method == "POST":
-        username = request.POST.get('username').lower()
+        username = request.POST.get('email').lower()
         password = request.POST.get('password')
 
         try:
@@ -39,9 +39,9 @@ def logoutUser(request):
     return redirect('home')
 
 def registerPage(request):
-    form = UserCreationForm()
+    form = MyUserCreationForm()
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = MyUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
             user.username = user.username.lower()
@@ -159,7 +159,20 @@ def deleteMessage(request, pk):
 
 @login_required(login_url='login')
 def updateUser(request):
-    return render(request, 'base/update-user.html')
+    user = request.user
+    form = userForm(instance=user)
+
+    if request.method == 'POST':
+        form = userForm(request.POST, request.FILES, instance=user)
+        if form.is_valid():
+            form.save()
+            return redirect('user-profile', pk=user.id)
+    return render(request, 'base/update-user.html', {'form': form})
+
+
+
+# def topicsPage(request):
+#     return render(request, 'base/topics.html',{})
 
 
 
