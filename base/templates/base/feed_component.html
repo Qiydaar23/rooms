@@ -24,7 +24,7 @@
         {% else %}
         <span>@Unknown User</span>
         {% endif %}
-        <h5>{{ room.id }} -- <a href="{% url 'room' room.id %}">{{ room.name }}</a></h5> <!-- Assuming room has a 'name' field -->
+        <h5>{{ room.id }} -- <a href="{% url 'room' room.id %}">{{ room.name }}</a></h5>
         <small>{{ room.topic.name }}</small>
         <hr>
     </div>
